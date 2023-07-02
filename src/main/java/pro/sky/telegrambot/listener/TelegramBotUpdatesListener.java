@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.entity.NotificationTask;
-import pro.sky.telegrambot.repository.NotificarionTaskRepository;
 import pro.sky.telegrambot.service.NotificationTaskService;
 
 import javax.annotation.PostConstruct;
@@ -26,7 +25,7 @@ import java.util.regex.Pattern;
 public class TelegramBotUpdatesListener implements UpdatesListener {
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
     private Pattern pattern = Pattern.compile(
-            "(\\d{1,2}.\\d{1,2}.\\d{4} \\d{1,2}:\\d{2})\\s+([А-я\\d\\s.!,?])"
+            "(\\d{1,2}.\\d{1,2}.\\d{4} \\d{1,2}:\\d{2})\\s+([Аa-я\\d\\s.!,?])"
     );
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     @Autowired
@@ -50,7 +49,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Long chatId = message.chat().id();
                 String text = message.text();
                 if ("/start".equals(text)) {
-                    sendMessage(chatId,"Привет! Отправь свою задачу в ввиде дд.мм.гггг чч:мм текст");
+                    sendMessage(chatId,"Привет! Отправь свою задачу в ввиде дд.мм.гггг чч:мм Текст");
+                    //Привет! Отправь свою задачу в ввиде дд.мм.гггг чч:мм текст
                 } else if (text!=null) {
                     Matcher matcher = pattern.matcher(text);
                     if (matcher.find()){
@@ -67,7 +67,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             sendMessage(chatId, "задача добавлена");
                         }
                     }else{
-
+                        sendMessage(chatId, "неверный формат");
                     }
                 }
             });
