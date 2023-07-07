@@ -12,6 +12,7 @@ public class TelegramBotConfiguration {
     @Value("${telegram.bot.token}")
     private String token;
 
+    //Bin connect to telegram API
     @Bean
     public TelegramBot telegramBot() {
         TelegramBot bot = new TelegramBot(token);

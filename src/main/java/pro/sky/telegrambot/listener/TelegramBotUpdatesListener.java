@@ -21,13 +21,18 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
+    //matcher pattern
     private Pattern pattern = Pattern.compile(
             "(\\d{1,2}.\\d{1,2}.\\d{4} \\d{1,2}:\\d{2})\\s+([Аa-я\\d\\s.!,?])"
     );
+    //date time pattern for formatter
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
+    //creating a connection
     @Autowired
     private TelegramBot telegramBot;
     @Autowired
@@ -38,6 +43,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         telegramBot.setUpdatesListener(this);
     }
 
+    //Processing telegram api requests
     @Override
     public int process(List<Update> updates) {
         try {
@@ -48,9 +54,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Message message = update.message();
                 Long chatId = message.chat().id();
                 String text = message.text();
+                //response to the start command
                 if ("/start".equals(text)) {
-                    sendMessage(chatId,"Привет! Отправь свою задачу в ввиде дд.мм.гггг чч:мм Текст");
-                    //Привет! Отправь свою задачу в ввиде дд.мм.гггг чч:мм текст
+                    sendMessage(chatId,"Привет! Отправь свою задачу в ввиде 31.12.2023 23:59 Включить телевизор");
                 } else if (text!=null) {
                     Matcher matcher = pattern.matcher(text);
                     if (matcher.find()){
@@ -63,6 +69,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             task.setChatId(chatId);
                             task.setMessage(text);
                             task.setNotificationDateTime(dateTime);
+                            //save to database
                             service.save(task);
                             sendMessage(chatId, "задача добавлена");
                         }
